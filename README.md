@@ -4,7 +4,7 @@
 This is firmware for certain STM32F042x/STM32F072xB-based USB-CAN adapters, notably:
 - candleLight: https://github.com/HubertD/candleLight (STM32F072xB)
 - candleLight: https://www.linux-automation.com/en/products/candlelight.html (STM32F072xB)
-- cantact: http://linklayer.github.io/cantact/ (STM32F042C6)
+- cantact: https://www.linklayer.com/tools (STM32F042C6)
 - canable (cantact clone): http://canable.io/ (STM32F042C6)
 - USB2CAN: https://github.com/roboterclubaachen/usb2can (STM32F042x6)
 - CANAlyze: https://kkuchera.github.io/canalyze/ (STM32F042C6)
@@ -12,6 +12,9 @@ This is firmware for certain STM32F042x/STM32F072xB-based USB-CAN adapters, nota
 - Entreé: https://github.com/tuna-f1sh/entree (STM32F042x6)
 - CANable-MKS: https://github.com/makerbase-mks/CANable-MKS (STM32F072xB)
 - ConvertDevice-xCAN: https://github.com/ConvertDevice/xCAN (STM32F072xB)
+- ConvertDevice-xCANFD: https://github.com/ConvertDevice/xCANFD (STM32G0B1CBT6)
+- DSD TECH SH-C30A: https://www.deshide.com/product-details.html?pid=384242&_t=1671089557 (STM32F072xB)
+- FYSETC UCAN: https://www.fysetc.com/products/fysetc-ucan-board-based-on-stm32f072-usb-to-can-adapter-support-with-canable-candlelight-klipper-firmware (STM32F072xB)
 
 Of important note is that the common STM32F103 will NOT work with this firmware because its hardware cannot use both USB and CAN simultaneously.
 Beware also the smaller packages in the F042 series which map a USB and CAN_TX signal on the same pin and are therefore unusable !
@@ -58,11 +61,11 @@ make help
 ```
 
 ## Download Binaries
-Prebuild binaries can be downloded by clicking [![CI](https://github.com/candle-usb/candleLight_fw/actions/workflows/ci.yml/badge.svg)](https://github.com/candle-usb/candleLight_fw/actions). On the workflow overview page, select the latest workflow that ran on master branch. The firmware artifacts can downloaded by clicking them at the bottom of the page.
+Prebuilt binaries can be downloaded by clicking [![CI](https://github.com/candle-usb/candleLight_fw/actions/workflows/ci.yml/badge.svg)](https://github.com/candle-usb/candleLight_fw/actions). On the workflow overview page, select the latest workflow that ran on master branch. The firmware artifacts can downloaded by clicking them at the bottom of the page.
 
 ## Flashing
 
-Flashing candleLight on linux: (source: [https://wiki.linklayer.com/index.php/CandleLightFirmware](https://wiki.linklayer.com/index.php/CandleLightFirmware))
+Flashing candleLight on linux: (source: [https://cantact.io/cantact/users-guide.html](https://cantact.io/cantact/users-guide.html))
 - Flashing requires the dfu-util tool. On Ubuntu, this can be installed with `sudo apt install dfu-util`.
 - compile as above, or download the current binary release: gsusb_cantact_8b2b2b4.bin
 - If dfu-util fails due to permission issues on Linux, you may need additional udev rules. Consult your distro's documentation and see `70-candle-usb.rules` provided here.
@@ -80,7 +83,7 @@ Flashing candleLight on linux: (source: [https://wiki.linklayer.com/index.php/Ca
 ### fail-safe method (or if flashing a blank device)
 - Disconnect the USB connector from the CANtact, short the BOOT pins, then reconnect the USB connector. The device should enumerate as "STM32 BOOTLOADER".
 
-- invoke dfu-util manually with: `sudo dfu-util --dfuse-address -d 0483:df11 -c 1 -i 0 -a 0 -s 0x08000000 -D CORRECT_FIRWARE.bin` where CORRECT_FIRWARE is the name of the desired .bin.
+- invoke dfu-util manually with: `sudo dfu-util --dfuse-address -d 0483:df11 -c 1 -i 0 -a 0 -s 0x08000000 -D CORRECT_FIRMWARE.bin` where CORRECT_FIRMWARE is the name of the desired .bin.
 - Disconnect the USB connector, un-short the BOOT pins, and reconnect.
 
 

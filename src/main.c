@@ -50,12 +50,10 @@ static void send_to_host(void);
 
 static USBD_GS_CAN_HandleTypeDef hGS_CAN;
 static USBD_HandleTypeDef hUSB = {0};
-static led_data_t hLED = {0};
 
 int main(void)
 {
 	can_data_t *channel = &hGS_CAN.channels[0];
-	uint32_t last_can_error_status = 0;
 
 	HAL_Init();
 	SystemClock_Config();
@@ -86,7 +84,9 @@ int main(void)
 
 	gpio_init();
 
-	led_init(&hLED, LEDRX_GPIO_Port, LEDRX_Pin, LEDRX_Active_High, LEDTX_GPIO_Port, LEDTX_Pin, LEDTX_Active_High);
+	led_init(&channel->leds,
+			 LEDRX_GPIO_Port, LEDRX_Pin, LEDRX_Active_High,
+			 LEDTX_GPIO_Port, LEDTX_Pin, LEDTX_Active_High);
 
 	/* nice wake-up pattern */
 	for (uint8_t i=0; i<10; i++)
@@ -96,7 +96,7 @@ int main(void)
 		HAL_GPIO_TogglePin(LEDTX_GPIO_Port, LEDTX_Pin);
 	}
 
-	led_set_mode(&hLED, led_mode_off);
+	led_set_mode(&channel->leds, led_mode_off);
 	timer_init();
 #if defined(STM32F0) || defined(STM32F4)
 	can_init(channel, CAN_INTERFACE);
@@ -115,7 +115,7 @@ int main(void)
 
 	USBD_Init(&hUSB, (USBD_DescriptorsTypeDef*)&FS_Desc, DEVICE_FS);
 	USBD_RegisterClass(&hUSB, &USBD_GS_CAN);
-	USBD_GS_CAN_Init(&hGS_CAN, &hUSB, &hLED);
+	USBD_GS_CAN_Init(&hGS_CAN, &hUSB);
 	USBD_Start(&hUSB);
 
 #ifdef CAN_S_GPIO_Port
@@ -143,7 +143,7 @@ int main(void)
 
 				list_add_tail_locked(&frame_object->list, &hGS_CAN.list_to_host);
 
-				led_indicate_trx(&hLED, led_tx);
+				led_indicate_trx(&channel->leds, led_tx);
 			} else {
 				list_add_locked(&frame_object->list, &hGS_CAN.list_from_host);
 			}
@@ -176,7 +176,7 @@ int main(void)
 
 					list_add_tail_locked(&frame_object->list, &hGS_CAN.list_to_host);
 
-					led_indicate_trx(&hLED, led_rx);
+					led_indicate_trx(&channel->leds, led_rx);
 				} else {
 					list_add_tail_locked(&frame_object->list, &hGS_CAN.list_frame_pool);
 				}
@@ -201,10 +201,8 @@ int main(void)
 				restore_irq(was_irq_enabled);
 
 				frame->timestamp_us = timer_get();
-				if (can_parse_error_status(can_err, last_can_error_status, channel, frame)) {
+				if (can_parse_error_status(channel, frame, can_err)) {
 					list_add_tail_locked(&frame_object->list, &hGS_CAN.list_to_host);
-
-					last_can_error_status = can_err;
 				} else {
 					list_add_tail_locked(&frame_object->list, &hGS_CAN.list_frame_pool);
 				}
@@ -213,7 +211,7 @@ int main(void)
 			}
 		}
 
-		led_update(&hLED);
+		led_update(&channel->leds);
 
 		if (USBD_GS_CAN_DfuDetachRequested(&hUSB)) {
 			dfu_run_bootloader();

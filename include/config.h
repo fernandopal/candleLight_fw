@@ -40,7 +40,7 @@ THE SOFTWARE.
 
 #include "version.h"
 
-#define CAN_QUEUE_SIZE				 64
+#define CAN_QUEUE_SIZE				 (64 * NUM_CAN_CHANNEL)
 
 #define USBD_VID					 0x1d50
 #define USBD_PID_FS					 0x606f
@@ -53,8 +53,11 @@ THE SOFTWARE.
 	#define USBD_MANUFACTURER_STRING (uint8_t*) "bytewerk"
 	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "candleLight firmware upgrade interface"
 
+	#define TIM2_CLOCK_SPEED		 48000000
+
 	#define CAN_INTERFACE			 CAN
 	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
 
 	#define CAN_S_Pin				 GPIO_PIN_13
 	#define CAN_S_GPIO_Port			 GPIOC
@@ -74,8 +77,11 @@ THE SOFTWARE.
 	#define USBD_MANUFACTURER_STRING (uint8_t*) "makerbase"
 	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "CANable-MKS firmware upgrade interface"
 
+	#define TIM2_CLOCK_SPEED		 48000000
+
 	#define CAN_INTERFACE			 CAN
 	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
 
 // SILENT pin not connected
 
@@ -94,8 +100,11 @@ THE SOFTWARE.
 	#define USBD_MANUFACTURER_STRING (uint8_t*) "ConvertDevice"
 	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "ConvertDevice xCAN firmware upgrade interface"
 
+	#define TIM2_CLOCK_SPEED		 48000000
+
 	#define CAN_INTERFACE			 CAN
 	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
 
 // SILENT pin not connected
 
@@ -109,13 +118,88 @@ THE SOFTWARE.
 	#define LEDTX_Mode		  GPIO_MODE_OUTPUT_PP
 	#define LEDTX_Active_High 0
 
+#elif defined(BOARD_CONVERTDEVICE_xCANFD)
+	#define USBD_PRODUCT_STRING_FS	 (uint8_t*) "ConvertDevice xCANFD"
+	#define USBD_MANUFACTURER_STRING (uint8_t*) "ConvertDevice"
+	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "ConvertDevice xCANFD firmware upgrade interface"
+
+	#define TIM2_CLOCK_SPEED		 64000000
+
+	#define CAN_INTERFACE			 FDCAN1
+	#define CAN_CLOCK_SPEED			 64000000
+	#define NUM_CAN_CHANNEL			 1
+	#define CANFD_SUPPORT
+
+	#define LEDRX_GPIO_Port	  GPIOA
+	#define LEDRX_Pin		  GPIO_PIN_0
+	#define LEDRX_Mode		  GPIO_MODE_OUTPUT_PP
+	#define LEDRX_Active_High 0
+
+	#define LEDTX_GPIO_Port	  GPIOA
+	#define LEDTX_Pin		  GPIO_PIN_1
+	#define LEDTX_Mode		  GPIO_MODE_OUTPUT_PP
+	#define LEDTX_Active_High 0
+
+	#define USB_GPIO_Port	  GPIOA
+	#define USB_Pin_DM		  GPIO_PIN_11
+	#define USB_Pin_DP		  GPIO_PIN_12
+
+#elif defined(BOARD_DSD_TECH_SH_C30A)
+	#define USBD_PRODUCT_STRING_FS	 (uint8_t*) "SH-C30A USB to CAN adapter"
+	#define USBD_MANUFACTURER_STRING (uint8_t*) "DSD TECH"
+	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "SH-C30A firmware upgrade interface"
+
+	#define TIM2_CLOCK_SPEED		 48000000
+
+	#define CAN_INTERFACE			 CAN
+	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
+
+// SILENT pin not connected
+
+	#define LEDRX_GPIO_Port	  GPIOB
+	#define LEDRX_Pin		  GPIO_PIN_1
+	#define LEDRX_Mode		  GPIO_MODE_OUTPUT_PP
+	#define LEDRX_Active_High 0
+
+	#define LEDTX_GPIO_Port	  GPIOB
+	#define LEDTX_Pin		  GPIO_PIN_0
+	#define LEDTX_Mode		  GPIO_MODE_OUTPUT_PP
+	#define LEDTX_Active_High 0
+
+#elif defined(BOARD_FYSETC_UCAN)
+	#define USBD_PRODUCT_STRING_FS	 (uint8_t*) "UCAN USB to CAN adapter"
+	#define USBD_MANUFACTURER_STRING (uint8_t*) "FYSETC"
+	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "UCAN firmware upgrade interface"
+
+	#define TIM2_CLOCK_SPEED		 48000000
+
+	#define CAN_INTERFACE			 CAN
+	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
+
+// SILENT pin not connected
+
+	#define LEDRX_GPIO_Port	  GPIOA
+	#define LEDRX_Pin		  GPIO_PIN_1
+	#define LEDRX_Mode		  GPIO_MODE_OUTPUT_PP
+	#define LEDRX_Active_High 1
+
+	#define LEDTX_GPIO_Port	  GPIOA
+	#define LEDTX_Pin		  GPIO_PIN_0
+	#define LEDTX_Mode		  GPIO_MODE_OUTPUT_PP
+	#define LEDTX_Active_High 1
+
 #elif defined(BOARD_cantact)
 	#define USBD_PRODUCT_STRING_FS	 (uint8_t*) "cantact gs_usb"
 	#define USBD_MANUFACTURER_STRING (uint8_t*) "cantact.io"
 	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "cantact firmware upgrade interface"
 
+	#define TIM2_CLOCK_SPEED		 48000000
+
 	#define CAN_INTERFACE			 CAN
 	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
 
 // SILENT pin not connected
 
@@ -134,8 +218,11 @@ THE SOFTWARE.
 	#define USBD_MANUFACTURER_STRING (uint8_t*) "canable.io"
 	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "canable firmware upgrade interface"
 
+	#define TIM2_CLOCK_SPEED		 48000000
+
 	#define CAN_INTERFACE			 CAN
 	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
 
 // SILENT pin not connected
 
@@ -154,8 +241,11 @@ THE SOFTWARE.
 	#define USBD_MANUFACTURER_STRING (uint8_t*) "Roboter Club Aachen"
 	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "usb2can firmware upgrade interface"
 
+	#define TIM2_CLOCK_SPEED		 48000000
+
 	#define CAN_INTERFACE			 CAN
 	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
 
 // SILENT pin not connected
 
@@ -184,8 +274,11 @@ THE SOFTWARE.
 	#define USBD_MANUFACTURER_STRING (uint8_t*) "STMicroelectronics"
 	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "CANAlyze firmware upgrade interface"
 
+	#define TIM2_CLOCK_SPEED		 48000000
+
 	#define CAN_INTERFACE			 CAN
 	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
 
 // SILENT pin not connected
 
@@ -204,8 +297,11 @@ THE SOFTWARE.
 	#define USBD_MANUFACTURER_STRING (uint8_t*) "chacaltech"
 	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "cannette firmware upgrade interface"
 
+	#define TIM2_CLOCK_SPEED		 48000000
+
 	#define CAN_INTERFACE			 CAN
 	#define CAN_CLOCK_SPEED			 48000000
+	#define NUM_CAN_CHANNEL			 1
 
 // SILENT pin not connected
 
@@ -233,6 +329,9 @@ THE SOFTWARE.
 	#define USBD_PRODUCT_STRING_FS	 (uint8_t*) "budgetcan gs_usb"
 	#define USBD_MANUFACTURER_STRING (uint8_t*) "budgetcan"
 	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "budgetcan firmware upgrade interface"
+
+	#define TIM2_CLOCK_SPEED		 64000000
+
 	#define CAN_INTERFACE			 FDCAN1
 	#define CAN_INTERFACE2			 FDCAN2
 	#define CAN_CLOCK_SPEED			 64000000
@@ -267,8 +366,11 @@ THE SOFTWARE.
 	#define USBD_MANUFACTURER_STRING (uint8_t*) "misc"
 	#define DFU_INTERFACE_STRING_FS	 (uint8_t*) "STM32F4VE firmware upgrade interface"
 
+	#define TIM2_CLOCK_SPEED		 96000000
+
 	#define CAN_INTERFACE			 CAN1
 	#define CAN_CLOCK_SPEED			 42000000
+	#define NUM_CAN_CHANNEL			 1
 
 	#define CAN_S_Pin				 GPIO_PIN_10
 	#define CAN_S_GPIO_Port			 GPIOA

@@ -30,6 +30,7 @@ THE SOFTWARE.
 #include <stdint.h>
 
 #include "can.h"
+#include "compiler.h"
 #include "config.h"
 #include "gs_usb.h"
 #include "led.h"
@@ -38,8 +39,13 @@ THE SOFTWARE.
 
 /* Define these here so they can be referenced in other files */
 
+#define GS_CAN_EP0_BUF_SIZE \
+	max5(sizeof(struct gs_host_config), \
+		 sizeof(struct gs_device_bittiming), \
+		 sizeof(struct gs_device_mode), \
+		 sizeof(struct gs_identify_mode), \
+		 sizeof(struct gs_device_termination_state))
 #define CAN_DATA_MAX_PACKET_SIZE 32    /* Endpoint IN & OUT Packet size */
-#define CAN_CMD_PACKET_SIZE		 64    /* Control Endpoint Packet size */
 #define USB_CAN_CONFIG_DESC_SIZ	 50
 #ifndef STM32G0
 	#define NUM_CAN_CHANNEL		 1
@@ -56,7 +62,7 @@ struct gs_host_frame_object {
 };
 
 typedef struct {
-	uint8_t ep0_buf[CAN_CMD_PACKET_SIZE];
+	uint8_t __aligned(4) ep0_buf[GS_CAN_EP0_BUF_SIZE];
 
 	__IO uint32_t TxState;
 
@@ -70,7 +76,6 @@ typedef struct {
 
 	can_data_t channels[NUM_CAN_CHANNEL];
 
-	led_data_t *leds;
 	bool dfu_detach_requested;
 
 	bool timestamps_enabled;
@@ -97,7 +102,7 @@ typedef struct {
 # define USB_RX_FIFO_SIZE ((256U / 4U) + 1U)
 #endif
 
-uint8_t USBD_GS_CAN_Init(USBD_GS_CAN_HandleTypeDef *hcan, USBD_HandleTypeDef *pdev, led_data_t *leds);
+uint8_t USBD_GS_CAN_Init(USBD_GS_CAN_HandleTypeDef *hcan, USBD_HandleTypeDef *pdev);
 void USBD_GS_CAN_SuspendCallback(USBD_HandleTypeDef  *pdev);
 void USBD_GS_CAN_ResumeCallback(USBD_HandleTypeDef  *pdev);
 bool USBD_GS_CAN_TxReady(USBD_HandleTypeDef *pdev);
@@ -106,4 +111,3 @@ bool USBD_GS_CAN_CustomInterfaceRequest(USBD_HandleTypeDef *pdev, USBD_SetupReqT
 
 bool USBD_GS_CAN_DfuDetachRequested(USBD_HandleTypeDef *pdev);
 uint8_t USBD_GS_CAN_SendFrame(USBD_HandleTypeDef *pdev, struct gs_host_frame *frame);
-uint8_t USBD_GS_CAN_Transmit(USBD_HandleTypeDef *pdev, uint8_t *buf, uint16_t len);

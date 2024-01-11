@@ -32,12 +32,20 @@
 #ifndef _LINUXKPI_LINUX_COMPILER_H_
 #define _LINUXKPI_LINUX_COMPILER_H_
 
+#include "util_macro.h"
+
 #ifndef __aligned
 #define __aligned(x) __attribute__((__aligned__(x)))
 #endif
 
 #ifndef __packed
 #define __packed __attribute__((__packed__))
+#endif
+
+#if __has_attribute(__fallthrough__)
+#define fallthrough __attribute__((__fallthrough__))
+#else
+#define fallthrough do {} while (0) /* fallthrough */
 #endif
 
 #define barrier()	   __asm__ __volatile__ ("" : : : "memory")
@@ -74,6 +82,27 @@
 		(type *)((char *)_p - offsetof(type, member)); \
 	})
 
+#define struct_size(ptr, field, num) \
+	(offsetof(__typeof(*(ptr)), field) + sizeof((ptr)->field[0]) * (num))
+
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
+
+#define DECLARE_FLEX_ARRAY(_t, _n) \
+	struct { \
+		struct { } __dummy_ ## _n; \
+		_t _n[0]; \
+	}
+
+#define min(x, y)			((x) < (y) ? (x) : (y))
+#define max(x, y)			((x) > (y) ? (x) : (y))
+
+#define min3(a, b, c)		min(a, min(b, c))
+#define max3(a, b, c)		max(a, max(b, c))
+
+#define min4(a, b, c, d)	min(min(a, b), min(c, d))
+#define max4(a, b, c, d)	max(max(a, b), max(b, d))
+
+#define min5(a, b, c, d, e) min3(min(a, b), min(c, d), e)
+#define max5(a, b, c, d, e) max3(max(a, b), max(b, d), e)
 
 #endif /* _LINUXKPI_LINUX_COMPILER_H_ */

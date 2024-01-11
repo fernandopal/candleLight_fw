@@ -24,8 +24,9 @@ THE SOFTWARE.
 
 */
 
-#include "timer.h"
+#include "config.h"
 #include "hal_include.h"
+#include "timer.h"
 
 void timer_init(void)
 {
